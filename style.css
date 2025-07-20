@@ -1,0 +1,134 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: linear-gradient(to bottom right, #fce4ec, #f8bbd0);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  text-align: center;
+}
+
+.envelope {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  background: #d7ccc8;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  border: 2px solid #a1887f;
+  border-radius: 8px;
+  overflow: hidden;
+  animation: scaleUp 2s ease forwards, float 3s ease-in-out infinite;
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0); opacity: 1; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #a1887f;
+  clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+  transform-origin: top;
+  transition: transform 1s ease;
+  z-index: 2;
+}
+
+.letter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff8e1;
+  padding: 20px;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+
+.greeting {
+  font-size: 16px;
+  color: #5d4037;
+  margin-bottom: 20px;
+}
+
+.open-btn {
+  margin-top: 20px;
+  background: #ec407a;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.open-btn:hover {
+  transform: scale(1.05);
+}
+
+.for-you {
+  background: #ff8a65;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  align-self: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.for-you:hover {
+  transform: scale(1.05);
+}
+
+/* Saat amplop terbuka */
+.open .flap {
+  transform: rotateX(-180deg);
+}
+
+.open .letter {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Responsif */
+@media (max-width: 400px) {
+  .envelope {
+    width: 250px;
+    height: 160px;
+  }
+
+  .greeting {
+    font-size: 14px;
+  }
+}

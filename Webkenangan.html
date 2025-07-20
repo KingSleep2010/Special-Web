@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You</title>
+<style>
+  body {
+    margin:0;
+    padding:0;
+    background: linear-gradient(135deg, #f5e1c9, #d6b98c);
+    font-family:'Georgia', serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+  }
+  
+  /* Lapisan background nostalgia */
+.nostalgia-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10; /* pastikan selalu di belakang semua konten */
+  background:
+    linear-gradient(135deg, #f5e1c9, #d6b98c),
+    url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat,
+    url('https://www.transparenttextures.com/patterns/noise.png') repeat;
+  background-blend-mode: overlay;
+  background-size: cover, auto, auto;
+  pointer-events: none; /* supaya tidak mengganggu klik */
+}
+  
+ .book {
+  position:relative;
+  bottom: 10vh;
+  right: 1vh;
+  width:300px;
+  max-width:90vw;
+  height:450px;
+  perspective:2000px;
+}
+
+.gold-decoration {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, rgba(255,215,0,0.15) 0%, transparent 40%) ,
+              radial-gradient(circle at 80% 70%, rgba(255,215,0,0.1) 0%, transparent 50%) ,
+              radial-gradient(circle at 50% 50%, rgba(255,215,0,0.05) 0%, transparent 60%);
+  background-repeat: no-repeat;
+  animation: moveGoldDecoration 12s linear infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes moveGoldDecoration {
+  0% {
+    background-position: 20% 30%, 80% 70%, 50% 50%;
+  }
+  25% {
+    background-position: 25% 25%, 75% 75%, 55% 45%;
+  }
+  50% {
+    background-position: 30% 20%, 70% 80%, 50% 50%;
+  }
+  75% {
+    background-position: 25% 35%, 85% 65%, 45% 55%;
+  }
+  100% {
+    background-position: 20% 30%, 80% 70%, 50% 50%;
+  }
+}
+
+  .page {
+    position:absolute;
+    top:0;
+    left:0;
+    width:310px;
+    height:530px;
+    border-radius:6px;
+    transform-origin:left;
+    transition: transform 1s ease;
+    backface-visibility:hidden;
+    overflow:hidden;
+    box-shadow:0 0 5px rgba(0,0,0,0.3);
+  }
+  
+  
+  .cover, .back-cover {
+    background:#4b2e1a url('https://www.transparenttextures.com/patterns/leather.png') repeat;
+    color:#ffd700;
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:5px;
+    cursor:pointer;
+    height: 500px;
+    width: 300px;
+  }
+  .cover {
+    font-size:2rem;
+    font-weight:bold;
+  }
+  .back-cover {
+    font-size:1.4rem;
+    cursor:default;
+  }
+  .sheet {
+    background:#fdf6e3 url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat;
+    cursor:pointer;
+  }
+  
+  .photos {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:10px;
+    height:100%;
+    align-items:center;
+  }
+  .photo {
+    width:100%;
+    text-align:center;
+  }
+  .photo img {
+    display: flex;
+    width:55%;
+    border-radius:4px;
+    box-shadow:0 0 5px rgba(0,0,0,0.3);
+    justify-content: left;
+  }
+  .caption {
+    font-size:0.8rem;
+    color:#333;
+    margin-top:7px;
+  }
+  .buttons {
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+    
+  }
+  button {
+    position: relative;
+    top: 100px;
+    padding:6px 14px;
+    background:#6d4c41;
+    color:#fff;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:1rem;
+    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+  }
+  button:hover {
+    background:#8d6e63;
+  }
+  @media(max-width:600px){
+    .photo { width:80%; }
+    .photos { flex-direction:column; }
+    .cover { font-size:1.5rem; padding:15px; }
+    .back-cover { font-size:1.2rem; padding:15px; }
+  }
+</style>
+</head>
+<audio id="bgMusic" src="One Only-Pamungkas.mp3" loop></audio>
+<body>
+<div class="nostalgia-bg"></div>
+<div class="book" id="book"></div>
+<div class="gold-decoration"></div>
+<div class="buttons">
+  <button id="prevBtn" style="display:none;">Kembali</button>
+  <button id="nextBtn">Selanjutnya</button>
+</div>
+
+<script>
+// Data halaman: sampul depan, lembar-lembar, dan sampul belakang
+const pages = [
+  { cover:true, title:"About You And Us" },
+  
+    { 
+    photos:[
+    {src:"Yuliani1.jpg", text:"Ini foto pertama yang akuu dapet dari kamuu sayangg, jujur pas pertama kali liat langsung reflek bilang CANTIKK BANGETT"},
+    {src:"Yuliani2.jpg", text:"Ini pas kitaa pertama kali fotbar, canggung bangett aslii hehehehe, MAU FOTBAR ULANGG"},
+  ]},
+  { photos:[
+    {src:"Yuliani3.jpg", text:"Kaloo yang ini tuhh pap gabut kamuu buat akuu pertama kalinyaa, seneng bangett dong aku dulu dapet pap cantikk ginii"},
+    {src:"Yuliani4.jpg", text:"Ini pas kita pulbar diem diem difotoin sama si khaikal WAHAHAHAHA, ini juga pas aku diospek sama kaka kaka rm eleuhh"},
+  ]},
+  { photos:[
+    {src:"Yuliani5.jpg", text:"Mumpung megang kamera khaikal, fotoin wanita cantik  dulu ga sihh kiww"},
+    {src:"Yuliani6.jpg", text:"Btw foto ini tuhh kamu cakep bangett tauu, kaya komuknya lucuu gituu"},
+    {src:"Yuliani7.jpg", text:"Mantapp bangg!!!😼"}
+  ]},
+  { photos:[
+    {src:"Yuliani8.jpg", text:"Pas kamu golf kalo aku ikutan ke pendopo kayanyaa aku bakal senyum senyum teruss liat kamuu mwehehehehe"},
+    {src:"Yuliani9.jpg", text:"WAHAHAHAHAHAA, CANTIKK BANGET KAMU SAYANGG. BERSYUKUR AKU PUNYA KAMUU"},
+    {src:"Yuliani10.jpg", text:"Ini pas kita di simlim, pokonya kita harus perbanyak fotbarr!!!"}
+  ]},
+  { photos:[
+    {src:"Yuliani11.jpg", text:"WAHAHAHAA, INI FOTO TERIMUT KAMUU SAYANGG, PAS WAKTU ITU AKU LANGSUNG SEMANGATT UJIAN KARENA DAPET PAP LUCUU DARI KAMUU"},
+    {src:"Yuliani12.jpg", text:"Ihhh, ini juga pap terlucu kamuu tauu. salting akuu dapet pap kamu yang inii"},
+    {src:"Yuliani13.jpg", text:"Nahhh kalo ini tuu pap tercantikk kamuu, ih busett tehh cakep amatt, jangan cakep cakep napaa, nanti adek kepincut dongg"}
+  ]},
+    { photos:[
+    {src:"Yuliani14.jpg", text:"Ini pas aku suruh khaikal diem diem fotoin kamuu mwehehehehe, cakep sekalii sihh kamuu"},
+    {src:"Yuliani15.jpg", text:"Nih juga samaa, cakep bangett euyy cewekuu inii"},
+    {src:"Yuliani17.jpg", text:"Ini mah teteh teteh rm atuu, cewekuu sudaa jadi teteh teteh rm ngerii"}
+  ]},
+    { photos:[
+    {src:"Yuliani18.jpg", text:"SHOW ME L!!"},
+    {src:"Yuliani19.jpg", text:"SHOW ME O!!"},
+    {src:"Yuliani20.jpg", text:"SHOW ME V!!"},
+    {src:"Yuliani21.jpg", text:"AND FINISH WITH AN E...L O V E"}
+  ]},
+    { photos:[
+    {src:"Yuliani22.jpg", text:"Kok imutnya masih nempel di muka kamu sihh??!, kan.. kann... aku jadi makin sukaa"},
+    {src:"Yuliani23.jpg", text:"Ini jugaa, kok imunya ga pernah luntur?!! mwehehehe i love youu sayangg"}
+  ]},
+    { photos:[
+    {src:"Yuliani24.jpg", text:"Ini pas difotoin si salma WAHAHAHAHA kacauu"},
+    {src:"Yuliani25.jpg", text:"Ini sebenarnya foto nyasar di kbl sih wkwkwkwkwk, si khaikal ngirim. lucuu sekalii sihh kamuu Yuliani Silvia Putri Nata Kusumah"}
+  ]},
+  
+  { backCover:true, text:"Terima Kasih Sayang Atas Kenangannya, I Love Youu So Much!! Semoga Kita Terus Bersama Yaaaa hehehehe. Oh Yaaa, Sweet Seventeen Sayangg. Sehat Sehat Wanita Favoritkuu. Semoga Semua Impian Kamu Bisa Terwujud Yaaa!! Aku Akan Selalu Ada Di Setiap Proses Panjangmuu, Dan Aku Akan Tetap Menjadi Supporter Nomor Satumuu!!!" }
+];
+
+const book = document.getElementById('book');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+
+let currentPage = 0;
+const totalPages = pages.length;
+
+// Buat halaman: sampul depan z-index paling atas, sampul belakang paling bawah
+pages.forEach((p,i)=>{
+  const el = document.createElement('div');
+  el.className='page';
+  el.style.zIndex= totalPages - i;
+  if(p.cover){
+    el.classList.add('cover');
+    el.innerText=p.title;
+  } else if(p.backCover){
+    el.classList.add('back-cover');
+    el.innerText=p.text;
+  } else {
+    el.classList.add('sheet');
+    el.innerHTML = 
+    `<div class="photos">` + p.photos.map(f=>
+      `<div class="photo"><img src="${f.src}"><div class="caption">${f.text}</div></div>`).join('') + `</div>`;
+  }
+  book.appendChild(el);
+});
+
+const pageElems = document.querySelectorAll('.page');
+
+nextBtn.addEventListener('click',()=>{
+  if (bgMusic.paused){
+  bgMusic.play();
+  }
+  // Hanya buka sampai halaman terakhir sebelum sampul belakang
+  if(currentPage < totalPages - 1){
+    pageElems[currentPage].style.transform='rotateY(-180deg)';
+    currentPage++;
+    prevBtn.style.display='inline-block';
+    const bgMusic = document.getElementById('bgMusic');
+
+    // Jika sudah di halaman terakhir (sebelum sampul belakang)
+    if(currentPage === totalPages - 1){
+      nextBtn.style.display='none';
+    }
+  }
+});
+
+prevBtn.addEventListener('click',()=>{
+  if(currentPage>0){
+    currentPage--;
+    pageElems[currentPage].style.transform='rotateY(0deg)';
+    nextBtn.style.display='inline-block';
+    if(currentPage===0) prevBtn.style.display='none';
+  }
+});
+</script>
+</body>
+</html>
